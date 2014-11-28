@@ -16,32 +16,36 @@ class LithiumOperationalTransformNetwork extends OperationalTransformNetwork {
 
 	MeshNode meshNode
 
-	String networkName
-	OperationalTransformSite site
+	Map<String, Integer> networks = [:].withDefault { 0 }
+	Map<String, OperationalTransformSite> localSite = [:]
 
 	LithiumOperationalTransformNetwork(MeshNode networkNode) {
 		meshNode = networkNode
 		meshNode.addMessageHandler new OperationalTransformMessageHandler(network: this)
+	}
 
-		site = new OperationalTransformSite()
-		site.id = siteId++
+	def joinMeshNetwork(String networkName) {
+
+		OperationalTransformSite site = new OperationalTransformSite()
 		site.network = this
 		site.sv << 0
 
-		sites << site
+		networks[networkName]++
+		localSite[networkName] = site
+
+		Message msg = new Message()
+		msg.messageType = OperationalTransformMessageHandler.TYPE_REQUEST_NEW_SITE_ID
+		msg.data.networkName = networkName
+		meshNode.sendAll(msg)
+
+		return site
 	}
 
-	void joinMeshNetwork() {
-		Message m1sid = new Message()
-		m1sid.messageType = OperationalTransformMessageHandler.TYPE_REQUEST_NEW_SITE_ID
-		meshNode.sendAll(m1sid)
-	}
-
-	void broadcast(int sendingNodeId, OperationalTransform trans) {
+	void broadcast(OperationalTransformSite sendingNode, OperationalTransform trans) {
 		Message message = new Message()
 		message.messageType = OperationalTransformMessageHandler.TYPE_BERYLLIUM_OPERATIONAL_TRANSFORM
-		message.data.networkName = networkName
-		message.data.sendingNodeId = sendingNodeId
+		message.data.networkName = localSite.find { k, v -> v == sendingNode }.key
+		message.data.sendingNodeId = sendingNode.id
 		message.data.trans = trans
 
 		meshNode.sendAll(message)
@@ -60,19 +64,19 @@ class LithiumOperationalTransformNetwork extends OperationalTransformNetwork {
 
 		sleep 1000
 
-		a.joinMeshNetwork()
-		b.joinMeshNetwork()
+		a.joinMeshNetwork('test')
+		b.joinMeshNetwork('test')
 
 		sleep 1000
 
-		println a.site.sv
-		println b.site.sv
+		println a.localSite.test.sv
+		println b.localSite.test.sv
 
-		a.broadcast(0, a.site.createOperationalTransform(OperationalTransform.TYPE_INSERT, 'a', 0))
+		a.broadcast(a.localSite.test, a.localSite.test.createOperationalTransform(OperationalTransform.TYPE_INSERT, 'a', 0))
 
 		sleep 1000
 
-		println a.site.sv
-		println b.site.sv
+		println a.localSite.test.sv
+		println b.localSite.test.sv
 	}
 }

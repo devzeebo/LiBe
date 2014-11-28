@@ -2,6 +2,7 @@ package com.zeebo.libe
 
 import com.google.gson.Gson
 import com.zeebo.beryllium.OperationalTransform
+import com.zeebo.beryllium.OperationalTransformSite
 import com.zeebo.lithium.mesh.Message
 import com.zeebo.lithium.message.MessageHandler
 
@@ -24,35 +25,43 @@ class OperationalTransformMessageHandler extends MessageHandler {
 	IntRange getTypeRange() { (15952..<15960) }
 
 	def handleBerylliumOperationalTransform(Message message) {
-		if (message.data.networkName == network.networkName) {
+
+		OperationalTransformSite site = network.localSite[message.data.networkName]
+
+		if (site) {
 			OperationalTransform ot = message.data.trans as OperationalTransform
 
-			network.site.receiveQueue << ot
-			network.site.tryInvokeRemote()
+			site.receiveQueue << ot
+			site.tryInvokeRemote()
 		}
 	}
 
 	def handleRequestNewSiteId(Message message) {
 
-		if (message.data.networkName == network.networkName) {
+		OperationalTransformSite site = network.localSite[message.data.networkName]
+
+		if (site) {
 			Message ret = new Message()
 			ret.messageType = TYPE_RESPOND_NEW_SITE_ID
 			ret.data.responseId = message.messageId
-			ret.data.networkName = network.networkName
+			ret.data.networkName = message.data.networkName
 			ret.data.siteId = network.sites.size()
 
-			network.sites << message.sender
-			network.site.sv << 0
+			network.networks[message.data.networkName]++
+			site.sv << 0
 
 			network.meshNode.send(message.sender, ret)
 		}
 	}
 
 	def handleRespondNewSiteId(Message message) {
-		if (message.data.networkName == network.networkName) {
-			network.site.id = message.data.siteId
-			(0..<network.site.id).each {
-				network.site.sv << 0
+
+		OperationalTransformSite site = network.localSite[message.data.networkName]
+
+		if (site) {
+			site.id = message.data.siteId
+			(0..<site.id).each {
+				site.sv << 0
 			}
 		}
 	}
