@@ -72,6 +72,13 @@ class LithiumOperationalTransformNetwork extends OperationalTransformNetwork {
 
 		sleep 1000
 
+		a.localSite.values()*.addListener {
+			println "A : $it"
+		}
+		b.localSite.values()*.addListener {
+			println "B : $it"
+		}
+
 		println a.localSite.test.sv
 		println b.localSite.test.sv
 
