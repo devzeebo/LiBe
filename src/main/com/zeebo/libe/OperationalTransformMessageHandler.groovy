@@ -28,8 +28,12 @@ class OperationalTransformMessageHandler extends MessageHandler {
 
 		OperationalTransformSite site = network.localSite[message.data.networkName]
 
+		println message.data
+
 		if (site) {
 			OperationalTransform ot = message.data.trans as OperationalTransform
+
+			println ot.sv
 
 			site.receiveQueue << ot
 			site.tryInvokeRemote()

@@ -52,15 +52,15 @@ class LithiumOperationalTransformNetwork extends OperationalTransformNetwork {
 	}
 
 	public static void main(String[] args) {
-		MeshNode n1 = new MeshNode('node1', 40026)
-		MeshNode n2 = new MeshNode('node2', 40027)
+		MeshNode n1 = new MeshNode('node1', 50026)
+		MeshNode n2 = new MeshNode('node2', 50027)
 		LithiumOperationalTransformNetwork a = new LithiumOperationalTransformNetwork(n1)
 		LithiumOperationalTransformNetwork b = new LithiumOperationalTransformNetwork(n2)
 
 		n1.listen()
 		n2.listen()
 
-		n1.connect('localhost', 40027)
+		n1.connect('localhost', 50027)
 
 		sleep 1000
 
