@@ -49,7 +49,7 @@ class OperationalTransformMessageHandler extends MessageHandler {
 			ret.messageType = TYPE_RESPOND_NEW_SITE_ID
 			ret.data.responseId = message.messageId
 			ret.data.networkName = message.data.networkName
-			ret.data.siteId = network.sites.size()
+			ret.data.siteId = network.networks[message.data.networkName]
 
 			network.networks[message.data.networkName]++
 			site.sv << 0
@@ -63,7 +63,10 @@ class OperationalTransformMessageHandler extends MessageHandler {
 		OperationalTransformSite site = network.localSite[message.data.networkName]
 
 		if (site) {
-			site.id = message.data.siteId
+
+			println "Site id in ${message.data.networkName} is now ${message.data.siteId as int}"
+
+			site.id = message.data.siteId as int
 			(0..<site.id).each {
 				site.sv << 0
 			}

@@ -65,6 +65,9 @@ class LithiumOperationalTransformNetwork extends OperationalTransformNetwork {
 		sleep 1000
 
 		a.joinMeshNetwork('test')
+
+		sleep 1000
+
 		b.joinMeshNetwork('test')
 
 		sleep 1000
@@ -73,6 +76,11 @@ class LithiumOperationalTransformNetwork extends OperationalTransformNetwork {
 		println b.localSite.test.sv
 
 		a.broadcast(a.localSite.test, a.localSite.test.createOperationalTransform(OperationalTransform.TYPE_INSERT, 'a', 0))
+		a.broadcast(a.localSite.test, a.localSite.test.createOperationalTransform(OperationalTransform.TYPE_INSERT, 'b', 1))
+		a.broadcast(a.localSite.test, a.localSite.test.createOperationalTransform(OperationalTransform.TYPE_INSERT, 'c', 2))
+		a.broadcast(a.localSite.test, a.localSite.test.createOperationalTransform(OperationalTransform.TYPE_INSERT, 'x', 1))
+		b.broadcast(b.localSite.test, b.localSite.test.createOperationalTransform(OperationalTransform.TYPE_INSERT, 'x', 1))
+		b.broadcast(b.localSite.test, b.localSite.test.createOperationalTransform(OperationalTransform.TYPE_INSERT, 'x', 1))
 
 		sleep 1000
 
