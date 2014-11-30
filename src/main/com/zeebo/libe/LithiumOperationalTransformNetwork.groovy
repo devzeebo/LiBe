@@ -12,7 +12,7 @@ import com.zeebo.lithium.mesh.Message
  */
 class LithiumOperationalTransformNetwork extends OperationalTransformNetwork {
 
-	static int siteId
+	static int siteId = 0
 
 	MeshNode meshNode
 
@@ -28,15 +28,17 @@ class LithiumOperationalTransformNetwork extends OperationalTransformNetwork {
 
 		OperationalTransformSite site = new OperationalTransformSite()
 		site.network = this
-		site.sv << 0
+		site.sv << 0 << 0 << 0
 
 		networks[networkName]++
 		localSite[networkName] = site
 
-		Message msg = new Message()
-		msg.messageType = OperationalTransformMessageHandler.TYPE_REQUEST_NEW_SITE_ID
-		msg.data.networkName = networkName
-		meshNode.sendAll(msg)
+		site.id = siteId
+
+//		Message msg = new Message()
+//		msg.messageType = OperationalTransformMessageHandler.TYPE_REQUEST_NEW_SITE_ID
+//		msg.data.networkName = networkName
+//		meshNode.sendAll(msg)
 
 		return site
 	}
